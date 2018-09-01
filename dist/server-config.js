@@ -5,7 +5,7 @@ const serverConfig = {
 		port: process.env.PORT || 3000
 	},
 	database: {
-		host: 'https://node-server-for-ionic.herokuapp.com' || 'localhost',
+		host: 'ec2-50-16-196-138.compute-1.amazonaws.com' || 'localhost',
 		port: 5432,
 		database: 'chat-app',
 		user: 'uviomwpzyxedbg',
