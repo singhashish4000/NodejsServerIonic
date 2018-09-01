@@ -5,11 +5,11 @@ const serverConfig = {
 		port: process.env.PORT || 3000
 	},
 	database: {
-		host: 'localhost',
+		host: process.env.DATABASE_URL || 'localhost',
 		port: 5432,
 		database: 'chat-app',
-		user: 'postgres',
-		password: 'postgres',
+		// user: 'postgres',
+		// password: 'postgres',
 		max: 10, // maksymalna liczba połączeń do bazy danych
 		idleTimeoutMillis: 30000
 	},
