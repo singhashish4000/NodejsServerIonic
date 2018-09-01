@@ -5,7 +5,7 @@ const serverConfig = {
 		port: process.env.PORT || 3000
 	},
 	database: {
-		host: process.env.DATABASE_URL || 'localhost',
+		host: 'localhost',
 		port: 5432,
 		database: 'chat-app',
 		user: 'postgres',
