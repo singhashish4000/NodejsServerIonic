@@ -7,6 +7,7 @@
     "build": "nodemon index.js --exec babel-node --presets es2015,stage-2",
     "prestart": "tsc",
     "start": "node dist/server.js",
+    "postdeploy": "psql postgres://uviomwpzyxedbg:1ef62dfbd85c24c8e84c47b3cb5eae2e81c910b683a5fe7932feabd4c5e502fd@ec2-50-16-196-138.compute-1.amazonaws.com:5432/d8quij0vfs5b2l -f databse/database.sql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
