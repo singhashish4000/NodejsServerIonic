@@ -1,4 +1,3 @@
-CREATE DATABASE "chat-app";
 CREATE TABLE uzytkownicy (
 	uz_id       serial NOT NULL,
 	uz_login    varchar(254) NOT NULL,
