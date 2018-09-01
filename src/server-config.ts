@@ -6,7 +6,7 @@ const serverConfig = {
 	},
 	database: {
 		host: 'https://node-server-for-ionic.herokuapp.com' || 'localhost',
-		port: process.env.PORT,
+		port: 5432,
 		database: 'chat-app',
 		// user: 'postgres',
 		// password: 'postgres',
