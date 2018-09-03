@@ -223,7 +223,7 @@ const dataModelContacts = {
 			pool.connect().then(client => {
 				client.query('SELECT COUNT(*) AS ile FROM contacts WHERE (co_user_id_start<>$1) AND (co_user_id_one=$1) AND (co_cs_id=$2)', [user_id, contactsStatus.expectant]).then(result => {
 					client.release();
-					observer.next({ status: 0, message: 'Poprawnie pobrano liczbę oczekujących zaproszeń do kontaktów.', data: result.rows[0].ile });
+					observer.next({ status: 0, message: 'The number of pending contact invitations was retrieved correctly.', data: result.rows[0].ile });
 					observer.complete();
 				});
 			}).catch(error => {
@@ -240,21 +240,21 @@ const dataModelContacts = {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				if (data.type === 'active') {
-					client.query('SELECT * FROM contacts JOIN usersON (co_user_id_two=user_id) WHERE (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.active]).then(result => {
+					client.query('SELECT * FROM contacts JOIN users ON (co_user_id_two=user_id) WHERE (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.active]).then(result => {
 						client.release();
 						observer.next({ status: 0, message: 'contact list.', data: result.rows });
 						observer.complete();
 					});
 				}
 				else if (data.type === 'send') {
-					client.query('SELECT * FROM contacts JOIN usersON (co_user_id_two=user_id) WHERE (co_user_id_start=$1) AND (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.expectant]).then(result => {
+					client.query('SELECT * FROM contacts JOIN users ON (co_user_id_two=user_id) WHERE (co_user_id_start=$1) AND (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.expectant]).then(result => {
 						client.release();
 						observer.next({ status: 0, message: 'contact list.', data: result.rows });
 						observer.complete();
 					});
 				}
 				else if (data.type === 'received') {
-					client.query('SELECT * FROM contacts JOIN usersON (co_user_id_two=user_id) WHERE (co_user_id_start<>$1) AND (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.expectant]).then(result => {
+					client.query('SELECT * FROM contacts JOIN users ON (co_user_id_two=user_id) WHERE (co_user_id_start<>$1) AND (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.expectant]).then(result => {
 						client.release();
 						observer.next({ status: 0, message: 'contact list.', data: result.rows });
 						observer.complete();
