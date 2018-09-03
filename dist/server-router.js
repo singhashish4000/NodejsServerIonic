@@ -96,9 +96,9 @@ serverRouter.post('/contacts-list', authentication_controller_1.authenticationCt
         contacts_controller_1.contactsCtrl.find(req).subscribe(value => {
             let data = value.data.map((element) => {
                 return {
-                    contactId: element.ko_id,
-                    userId: element.uz_id,
-                    login: element.uz_login
+                    contactId: element.co_id,
+                    userId: element.user_id,
+                    login: element.user_login
                 };
             });
             res.json({ status: 0, message: 'Contact list.', data: data });
@@ -120,8 +120,8 @@ serverRouter.post('/contacts-find-users', authentication_controller_1.authentica
     contacts_controller_1.contactsCtrl.findUsersNotInContacts(req).subscribe(value => {
         let data = value.data.map((element) => {
             return {
-                id: element.uz_id,
-                login: element.uz_login
+                id: element.user_id,
+                login: element.user_login
             };
         });
         res.json({ status: 0, message: 'List of users.', data: data });
@@ -193,7 +193,7 @@ serverRouter.post('/contacts-delete-users', authentication_controller_1.authenti
                 });
                 // wysłanie powiadomienia do użytkownika który usuwał
                 socket_io_wraper_1.socketIoWraper.getAll().forEach(socket => {
-                    if (socket['userId'] && socket['userId'] === Number(req['decoded'].uz_id)) {
+                    if (socket['userId'] && socket['userId'] === Number(req['decoded'].user_id)) {
                         socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
                     }
                 });
@@ -230,7 +230,7 @@ serverRouter.post('/contacts-confirm-users', authentication_controller_1.authent
                 });
                 // wysłanie powiadomienia do użytkownika który zaakceptował zaproszenie
                 socket_io_wraper_1.socketIoWraper.getAll().forEach(socket => {
-                    if (socket['userId'] && socket['userId'] === Number(req['decoded'].uz_id)) {
+                    if (socket['userId'] && socket['userId'] === Number(req['decoded'].user_id)) {
                         socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
                     }
                 });

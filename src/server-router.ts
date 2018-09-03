@@ -86,7 +86,7 @@ serverRouter.post('/user-register', (req, res) => {
 	}
 });
 /**
- * Pobranie listy kontaktów.
+ * Downloading the contact list.
  * 
  * @param req.body.type 'active'   - list of accepted contacts,
  *                      'send'     - list of unaccepted contacts sent by the user,
@@ -105,9 +105,9 @@ serverRouter.post('/contacts-list', authenticationCtrl.authenticateRequest, (req
 		contactsCtrl.find(req).subscribe(value => {
 			let data = value.data.map((element: any) => {
 				return {
-					contactId: element.ko_id,
-					userId: element.uz_id,
-					login: element.uz_login
+					contactId: element.co_id,
+					userId: element.user_id,
+					login: element.user_login
 				};
 			});
 			res.json({ status: 0, message: 'Contact list.', data: data });
@@ -129,8 +129,8 @@ serverRouter.post('/contacts-find-users', authenticationCtrl.authenticateRequest
 	contactsCtrl.findUsersNotInContacts(req).subscribe(value => {
 		let data = value.data.map((element: any) => {
 			return {
-				id: element.uz_id,
-				login: element.uz_login
+				id: element.user_id,
+				login: element.user_login
 			};
 		});
 		res.json({ status: 0, message: 'List of users.', data: data });
@@ -165,7 +165,7 @@ serverRouter.post('/contacts-invite-users', authenticationCtrl.authenticateReque
 	if (validateParams(req)) {
 		contactsCtrl.inviteUser(req).subscribe(value => {
 			if (value.status === 0) {
-				// wysłanie powiadomienia do zaproszonego użytkownika
+				// sending a notification to the invited user
 				socketIoWraper.getAll().forEach(socket => {
 					if (socket['userId'] && socket['userId'] === Number(req.body.userId)) {
 						socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
@@ -198,15 +198,15 @@ serverRouter.post('/contacts-delete-users', authenticationCtrl.authenticateReque
 	if (validateParams(req)) {
 		contactsCtrl.deteleUser(req).subscribe(value => {
 			if (value.status === 0) {
-				// wysłanie powiadomienia do usuniętego użytkownika
+				// sending a notification to the deleted user
 				socketIoWraper.getAll().forEach(socket => {
 					if (socket['userId'] && socket['userId'] === Number(req.body.userId)) {
 						socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
 					}
 				});
-				// wysłanie powiadomienia do użytkownika który usuwał
+				// sending a notification to the user who deleted
 				socketIoWraper.getAll().forEach(socket => {
-					if (socket['userId'] && socket['userId'] === Number(req['decoded'].uz_id)) {
+					if (socket['userId'] && socket['userId'] === Number(req['decoded'].user_id)) {
 						socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
 					}
 				});
@@ -237,15 +237,15 @@ serverRouter.post('/contacts-confirm-users', authenticationCtrl.authenticateRequ
 	if (validateParams(req)) {
 		contactsCtrl.confirmUser(req).subscribe(value => {
 			if (value.status === 0) {
-				// wysłanie powiadomienia do użytkownika którego zaposzenie zaakceptowaliśmy
+				// sending a notification to the user who send the invitation
 				socketIoWraper.getAll().forEach(socket => {
 					if (socket['userId'] && socket['userId'] === Number(req.body.userId)) {
 						socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
 					}
 				});
-				// wysłanie powiadomienia do użytkownika który zaakceptował zaproszenie
+				// sending a notification to the user who accepted the invitation
 				socketIoWraper.getAll().forEach(socket => {
-					if (socket['userId'] && socket['userId'] === Number(req['decoded'].uz_id)) {
+					if (socket['userId'] && socket['userId'] === Number(req['decoded'].user_id)) {
 						socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
 					}
 				});

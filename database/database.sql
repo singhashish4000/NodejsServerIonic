@@ -1,52 +1,52 @@
-CREATE TABLE uzytkownicy (
-	uz_id       serial NOT NULL,
-	uz_login    varchar(254) NOT NULL,
-	uz_haslo    varchar(254) NOT NULL,
-	uz_email    varchar(254) NOT NULL,
-	PRIMARY KEY (uz_id)
+CREATE TABLE users (
+	user_id       serial NOT NULL,
+	user_login    varchar(254) NOT NULL,
+	user_password    varchar(254) NOT NULL,
+	user_email    varchar(254) NOT NULL,
+	PRIMARY KEY (user_id)
 );
-CREATE UNIQUE INDEX uzytkownicy_idx_001 ON uzytkownicy(uz_email);
-CREATE UNIQUE INDEX uzytkownicy_idx_002 ON uzytkownicy(uz_login);
+CREATE UNIQUE INDEX users_idx_001 ON users(user_email);
+CREATE UNIQUE INDEX users_idx_002 ON users(user_login);
 
-CREATE TABLE kontakty_statusy (
-	ks_id    serial NOT NULL,
-	ks_nazwa varchar(35),
-	PRIMARY KEY (ks_id)
-);
-
-CREATE TABLE kontakty (
-	ko_id          serial NOT NULL,
-	ko_uz_id_start integer REFERENCES uzytkownicy, -- kto zainicjował kontakt
-	ko_uz_id_od    integer REFERENCES uzytkownicy, -- pierwszy użytkownik
-	ko_uz_id_do    integer REFERENCES uzytkownicy, -- drugi użytkownik
-	ko_ks_id       integer REFERENCES kontakty_statusy,
-	PRIMARY KEY (ko_id)
-);
-CREATE INDEX kontakty_idx_001 ON kontakty(ko_uz_id_start);
-CREATE INDEX kontakty_idx_002 ON kontakty(ko_uz_id_od);
-CREATE INDEX kontakty_idx_003 ON kontakty(ko_uz_id_do);
-CREATE INDEX kontakty_idx_004 ON kontakty(ko_ks_id);
-
-CREATE TABLE wiadomosci_typy (
-	wt_id    serial NOT NULL,
-	wt_nazwa varchar(35), -- typ wiadomości
-	PRIMARY KEY (wt_id)
+CREATE TABLE contacts_status (
+	cs_id    serial NOT NULL,
+	cs_name varchar(35),
+	PRIMARY KEY (cs_id)
 );
 
-CREATE TABLE wiadomosci (
-	wi_id       serial NOT NULL,
-	wi_data     timestamp DEFAULT current_timestamp,
-	wi_wt_id    integer REFERENCES wiadomosci_typy,
-	wi_uz_id_od integer REFERENCES uzytkownicy, -- kto wysłał wiadomość
-	wi_uz_id_do integer REFERENCES uzytkownicy, -- do kogo wysłano wiadomość
-	wi_tresc    text,
-	PRIMARY KEY (wi_id)
+CREATE TABLE contacts (
+	co_id          serial NOT NULL,
+	co_user_id_start integer REFERENCES users, -- who initiated the contact
+	co_user_id_one    integer REFERENCES users, -- first user
+	co_user_id_two    integer REFERENCES users, -- second user
+	co_cs_id       integer REFERENCES contacts_status,
+	PRIMARY KEY (co_id)
 );
-CREATE INDEX wiadomosci_idx_001 ON wiadomosci(wi_uz_id_od);
-CREATE INDEX wiadomosci_idx_002 ON wiadomosci(wi_uz_id_do);
-CREATE INDEX wiadomosci_idx_003 ON wiadomosci(wi_wt_id);
+CREATE INDEX contacts_idx_001 ON contacts(co_user_id_start);
+CREATE INDEX contacts_idx_002 ON contacts(co_user_id_one);
+CREATE INDEX contacts_idx_003 ON contacts(co_user_id_two);
+CREATE INDEX contacts_idx_004 ON contacts(co_cs_id);
 
-INSERT INTO kontakty_statusy (ks_id, ks_nazwa) VALUES (-1, 'usunięty');
-INSERT INTO kontakty_statusy (ks_id, ks_nazwa) VALUES ( 1, 'aktywny');
-INSERT INTO kontakty_statusy (ks_id, ks_nazwa) VALUES ( 2, 'oczekujący');
-INSERT INTO wiadomosci_typy (wt_id, wt_nazwa) VALUES (1, 'private-message');
+CREATE TABLE message_types (
+	mt_id    serial NOT NULL,
+	wt_name varchar(35), -- type of message
+	PRIMARY KEY (mt_id)
+);
+
+CREATE TABLE messages (
+	m_id       serial NOT NULL,
+	m_data     timestamp DEFAULT current_timestamp,
+	m_mt_id    integer REFERENCES message_types,
+	m_user_id_one integer REFERENCES users, -- who sent the message
+	m_user_id_two integer REFERENCES users, -- who the message was sent to
+	m_content    text,
+	PRIMARY KEY (m_id)
+);
+CREATE INDEX messages_idx_001 ON messages(m_user_id_one);
+CREATE INDEX messages_idx_002 ON messages(m_user_id_two);
+CREATE INDEX messages_idx_003 ON messages(m_mt_id);
+
+INSERT INTO contacts_status (cs_id, cs_name) VALUES (-1, 'deleted');
+INSERT INTO contacts_status (cs_id, cs_name) VALUES ( 1, 'active');
+INSERT INTO contacts_status (cs_id, cs_name) VALUES ( 2, 'expectant');
+INSERT INTO message_types (mt_id, wt_name) VALUES (1, 'private-message');

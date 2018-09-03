@@ -30,9 +30,9 @@ io.sockets.on('connection', (socket) => {
             }
             else {
                 // zapamiętanie identyfikatora użytkownika który się zalogował
-                socket['userId'] = value.uz_id;
+                socket['userId'] = value.user_id;
                 socket_io_wraper_1.socketIoWraper.push(socket);
-                io.sockets.emit('login', { type: 'login', time: new Date(), login: value.uz_login, text: 'he logged in' });
+                io.sockets.emit('login', { type: 'login', time: new Date(), login: value.user_login, text: 'he logged in' });
             }
         });
     });
@@ -42,7 +42,7 @@ io.sockets.on('connection', (socket) => {
                 console.log('Event(\'message\'): user authentication error');
             }
             else {
-                io.sockets.emit('message', { type: 'message', time: new Date(), login: value.uz_login, text: data.text });
+                io.sockets.emit('message', { type: 'message', time: new Date(), login: value.user_login, text: data.text });
             }
         });
     });
@@ -53,12 +53,12 @@ io.sockets.on('connection', (socket) => {
             }
             else {
                 let token = value;
-                chat_controller_1.chatCtrl.saveMessage({ type: 'private-message', srcUserId: token.uz_id, destUserId: data.destUserId, message: data.text }).subscribe(value => {
-                    let srcSocket = socket_io_wraper_1.socketIoWraper.findByUserId(token.uz_id);
+                chat_controller_1.chatCtrl.saveMessage({ type: 'private-message', srcUserId: token.user_id, destUserId: data.destUserId, message: data.text }).subscribe(value => {
+                    let srcSocket = socket_io_wraper_1.socketIoWraper.findByUserId(token.user_id);
                     let destSocket = socket_io_wraper_1.socketIoWraper.findByUserId(data.destUserId);
-                    srcSocket.emit('private-message', { type: 'private-message', time: value.data.wi_data, login: token.uz_login, text: value.data.wi_tresc });
+                    srcSocket.emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, text: value.data.m_content });
                     if (destSocket) {
-                        destSocket.emit('private-message', { type: 'private-message', time: value.data.wi_data, login: token.uz_login, text: value.data.wi_tresc });
+                        destSocket.emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, text: value.data.m_content });
                     }
                 }, error => {
                     console.log('Event(\'private-message\'): an error occured ' + error);

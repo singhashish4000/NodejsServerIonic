@@ -12,10 +12,10 @@ pool.on('error', (err, client) => {
 	console.error('An error occurred while downloading the connection to the database!', err.message, err.stack)
 });
 
-const kontaktyStatusy = {
-	usuniety: (-1),
-	aktywny: 1,
-	oczekujacy: 2
+const contactsStatus = {
+	detached: (-1),
+	active: 1,
+	expectant: 2
 };
 
 /**
@@ -31,18 +31,18 @@ const dataModelUsers = {
 	userLogin: (data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
-				client.query('SELECT * FROM uzytkownicy WHERE (LOWER(uz_email)=LOWER($1))', [data.email]).then(result => {
+				client.query('SELECT * FROM users WHERE (LOWER(user_email)=LOWER($1))', [data.email]).then(result => {
 					let results = [];
 					result.rows.forEach(row => {
-						if (bcrypt.compareSync(data.password, row.uz_haslo)) {
+						if (bcrypt.compareSync(data.password, row.user_password)) {
 							results.push(row);
 						}
 					});
 					if (results.length === 1) {
-						let tokenData = { uz_id: results[0].uz_id, uz_login: results[0].uz_login };
+						let tokenData = { user_id: results[0].user_id, user_login: results[0].user_login };
 						let token = jwt.sign(tokenData, serverConfig.jsonwebtoken.secret, { expiresIn: 60 * 24 });
 						client.release();
-						observer.next({ status: 0, message: 'The user has been logged in correctly.', data: { token: token, login: results[0].uz_login }});
+						observer.next({ status: 0, message: 'The user has been logged in correctly.', data: { token: token, login: results[0].user_login }});
 						observer.complete();
 					}
 					else {
@@ -66,9 +66,9 @@ const dataModelUsers = {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				client.query('BEGIN').then(result => {
-					client.query('SELECT COUNT(*) AS ile FROM uzytkownicy WHERE (LOWER(uz_email)=LOWER($1))', [data.email]).then(result => {
+					client.query('SELECT COUNT(*) AS ile FROM users WHERE (LOWER(user_email)=LOWER($1))', [data.email]).then(result => {
 						if (result.rows && Number(result.rows[0].ile) === 0) {
-							client.query('SELECT COUNT(*) AS ile FROM uzytkownicy WHERE (LOWER(uz_login)=LOWER($1))', [data.login]).then(result => {
+							client.query('SELECT COUNT(*) AS ile FROM users WHERE (LOWER(user_login)=LOWER($1))', [data.login]).then(result => {
 								if (result.rows && Number(result.rows[0].ile) === 0) {
 									let pom = new Promise((resolve, reject) => {
 										bcrypt.genSalt(10, (err, salt) => {
@@ -87,10 +87,10 @@ const dataModelUsers = {
 											}
 										});
 									}).then(hash => {
-										client.query('INSERT INTO uzytkownicy (uz_haslo, uz_login, uz_email) VALUES ($1, $2, $3)', [hash, data.login, data.email]).then(result => {
+										client.query('INSERT INTO users(user_password, user_login, user_email) VALUES ($1, $2, $3)', [hash, data.login, data.email]).then(result => {
 											client.query('COMMIT').then(result => {
 												client.release();
-												observer.next({ status: 0, message: 'Poprawnie zarejestrowano nowego użytkownika.' });
+												observer.next({ status: 0, message: 'A new user has been registered correctly.' });
 												observer.complete();
 											});
 										});
@@ -126,30 +126,30 @@ const dataModelContacts = {
 	 * Returns a list of users who are not on the contact list
 	 * user (regardless of status).
 	 * 
-	 * @param uz_id {number} user ID
+	 * @param user_id {number} user ID
 	 * @param data.login {string} an inscription for filtering the list of users
 	 * 
 	 * This is a list of people that you can invite to contacts.
 	 */
-	findUsersNotInContacts: (uz_id: number, data: any): Observable<any> => {
+	findUsersNotInContacts: (user_id: number, data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				client.query(`
 					SELECT *
-					FROM uzytkownicy
-					WHERE (uz_id<>$1)
-						AND (LOWER(uz_login) LIKE LOWER($2))
-						AND (uz_id NOT IN (
-							SELECT ko_uz_id_do
-							FROM kontakty
-							WHERE (ko_uz_id_od=$1)
-								AND (ko_ks_id<>(-1))
-							GROUP BY ko_uz_id_do
+					FROM users
+					WHERE (user_id<>$1)
+						AND (LOWER(user_login) LIKE LOWER($2))
+						AND (user_id NOT IN (
+							SELECT co_user_id_two
+							FROM contacts
+							WHERE (co_user_id_one=$1)
+								AND (co_cs_id<>(-1))
+							GROUP BY co_user_id_two
 						))
-					ORDER BY uz_login
-				`, [uz_id, `%${data.login}%`]).then(result => {
+					ORDER BY user_login
+				`, [user_id, `%${data.login}%`]).then(result => {
 					client.release();
-					observer.next({ status: 0, message: 'Lista użytkowników.', data: result.rows });
+					observer.next({ status: 0, message: 'List of users.', data: result.rows });
 					observer.complete();
 				});
 			}).catch(error => {
@@ -160,34 +160,34 @@ const dataModelContacts = {
 	/**
 	 * Registering a contact invitation.
 	 * 
-	 * @param uz_id {number} user ID (user inviting to contacts)
+	 * @param user_id {number} user ID (user inviting to contacts)
 	 * @param data.userId {nuumber} user's ID (user invited to contacts)
 	 */
-	inviteUserToContacts: (uz_id: number, data: any): Observable<any> => {
+	inviteUserToContacts: (user_id: number, data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				client.query('BEGIN').then(result => {
-					client.query('SELECT * FROM kontakty WHERE (ko_uz_id_od=$1) AND (ko_uz_id_do=$2)', [uz_id, data.userId]).then(result => {
+					client.query('SELECT * FROM contacts WHERE (co_user_id_one=$1) AND (co_user_id_two=$2)', [user_id, data.userId]).then(result => {
 						if (result.rows.length === 0) {
-							// związku jeszcze nie było - rejestracja związków w obie strony (uzytkownik1 -> użytkownik2, użytkownik2 -> użytkownik1)
-							client.query('INSERT INTO kontakty (ko_uz_id_start, ko_uz_id_od, ko_uz_id_do, ko_ks_id) VALUES ($1, $2, $3, 2)', [uz_id, uz_id, data.userId]).then(result => {
-								client.query('INSERT INTO kontakty (ko_uz_id_start, ko_uz_id_od, ko_uz_id_do, ko_ks_id) VALUES ($1, $2, $3, 2)', [uz_id, data.userId, uz_id]).then(result => {
+							//the relationship has not been there - registration of compounds in both directions (user1 -> user2, user2 -> user1)
+							client.query('INSERT INTO contacts (co_user_id_start, co_user_id_one, co_user_id_two, co_cs_id) VALUES ($1, $2, $3, 2)', [user_id, user_id, data.userId]).then(result => {
+								client.query('INSERT INTO contacts (co_user_id_start, co_user_id_one, co_user_id_two, co_cs_id) VALUES ($1, $2, $3, 2)', [user_id, data.userId, user_id]).then(result => {
 									client.query('COMMIT').then(result => {
 										client.release();
-										observer.next({ status: 0, message: 'Poprawnie zaproszono nowego użytkownika do kontaktów.', data: { sourceUserId: uz_id, targetUserId: data.userId } });
+										observer.next({ status: 0, message: 'A new contact user has been successfully invited.', data: { sourceUserId: user_id, targetUserId: data.userId } });
 										observer.complete();
 									});
 								});
 							});
 						}
 						else {
-							// związek już był - aktualizacja związków w obie strony (uzytkownik1 -> użytkownik2, użytkownik2 -> użytkownik1)
-							if (Number(result.rows[0].ko_ks_id) === kontaktyStatusy.usuniety) {
-								client.query('UPDATE kontakty SET ko_uz_id_start=$1, ko_ks_id=$2 WHERE (ko_uz_id_od=$3) AND (ko_uz_id_do=$4)', [uz_id, kontaktyStatusy.oczekujacy, uz_id, data.userId]).then(result => {
-									client.query('UPDATE kontakty SET ko_uz_id_start=$1, ko_ks_id=$2 WHERE (ko_uz_id_od=$3) AND (ko_uz_id_do=$4)', [uz_id, kontaktyStatusy.oczekujacy, data.userId, uz_id]).then(result => {
+							// the relationship was updated ,connections in both directions (user1 -> user2, user2 -> user1)
+							if (Number(result.rows[0].co_cs_id) === contactsStatus.detached) {
+								client.query('UPDATE contacts SET co_user_id_start=$1, co_cs_id=$2 WHERE (co_user_id_one=$3) AND (co_user_id_two=$4)', [user_id, contactsStatus.expectant, user_id, data.userId]).then(result => {
+									client.query('UPDATE contacts SET co_user_id_start=$1, co_cs_id=$2 WHERE (co_user_id_one=$3) AND (co_user_id_two=$4)', [user_id, contactsStatus.expectant, data.userId, user_id]).then(result => {
 										client.query('COMMIT').then(result => {
 											client.release();
-											observer.next({ status: 0, message: 'A new contact user has been successfully invited.', data: { sourceUserId: uz_id, targetUserId: data.userId } });
+											observer.next({ status: 0, message: 'A new contact user has been successfully invited.', data: { sourceUserId: user_id, targetUserId: data.userId } });
 											observer.complete();
 										});
 									});
@@ -195,7 +195,7 @@ const dataModelContacts = {
 							}
 							else {
 								client.release();
-								observer.next({ status: 0, message: 'Contact is already registered.', data: { sourceUserId: uz_id, targetUserId: data.userId } });
+								observer.next({ status: 0, message: 'Contact is already registered.', data: { sourceUserId: user_id, targetUserId: data.userId } });
 								observer.complete();
 							}
 						}
@@ -214,14 +214,14 @@ const dataModelContacts = {
 	/**
 	 * Returns the number of contacts waiting for user approval.
 	 * 
-	 * @param uz_id
+	 * @param user_id
 	 * 
 	 *To show the number on the contact icon.
 	 */
-	getNumWaitingInvitations: (uz_id: number): Observable<any> => {
+	getNumWaitingInvitations: (user_id: number): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
-				client.query('SELECT COUNT(*) AS ile FROM kontakty WHERE (ko_uz_id_start<>$1) AND (ko_uz_id_od=$1) AND (ko_ks_id=$2)', [uz_id, kontaktyStatusy.oczekujacy]).then(result => {
+				client.query('SELECT COUNT(*) AS ile FROM contacts WHERE (co_user_id_start<>$1) AND (co_user_id_one=$1) AND (co_cs_id=$2)', [user_id, contactsStatus.expectant]).then(result => {
 					client.release();
 					observer.next({ status: 0, message: 'Poprawnie pobrano liczbę oczekujących zaproszeń do kontaktów.', data: result.rows[0].ile });
 					observer.complete();
@@ -236,25 +236,25 @@ const dataModelContacts = {
 	 * 
 	 * @param data.type {string} list type (active, send, received)
 	 */
-	findContacts: (uz_id: number, data: any): Observable<any> => {
+	findContacts: (user_id: number, data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				if (data.type === 'active') {
-					client.query('SELECT * FROM kontakty JOIN uzytkownicy ON (ko_uz_id_do=uz_id) WHERE (ko_uz_id_od=$1) AND (ko_ks_id=$2) ORDER BY uz_login', [uz_id, kontaktyStatusy.aktywny]).then(result => {
+					client.query('SELECT * FROM contacts JOIN usersON (co_user_id_two=user_id) WHERE (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.active]).then(result => {
 						client.release();
 						observer.next({ status: 0, message: 'contact list.', data: result.rows });
 						observer.complete();
 					});
 				}
 				else if (data.type === 'send') {
-					client.query('SELECT * FROM kontakty JOIN uzytkownicy ON (ko_uz_id_do=uz_id) WHERE (ko_uz_id_start=$1) AND (ko_uz_id_od=$1) AND (ko_ks_id=$2) ORDER BY uz_login', [uz_id, kontaktyStatusy.oczekujacy]).then(result => {
+					client.query('SELECT * FROM contacts JOIN usersON (co_user_id_two=user_id) WHERE (co_user_id_start=$1) AND (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.expectant]).then(result => {
 						client.release();
 						observer.next({ status: 0, message: 'contact list.', data: result.rows });
 						observer.complete();
 					});
 				}
 				else if (data.type === 'received') {
-					client.query('SELECT * FROM kontakty JOIN uzytkownicy ON (ko_uz_id_do=uz_id) WHERE (ko_uz_id_start<>$1) AND (ko_uz_id_od=$1) AND (ko_ks_id=$2) ORDER BY uz_login', [uz_id, kontaktyStatusy.oczekujacy]).then(result => {
+					client.query('SELECT * FROM contacts JOIN usersON (co_user_id_two=user_id) WHERE (co_user_id_start<>$1) AND (co_user_id_one=$1) AND (co_cs_id=$2) ORDER BY user_login', [user_id, contactsStatus.expectant]).then(result => {
 						client.release();
 						observer.next({ status: 0, message: 'contact list.', data: result.rows });
 						observer.complete();
@@ -271,21 +271,21 @@ const dataModelContacts = {
 	/**
 	 *Delete contact.
 	 * 
-	 * @param uz_id
+	 * @param user_id
 	 * @param data.contactId
 	 */
-	deleteUserFromContacts: (uz_id: number, data: any): Observable<any> => {
+	deleteUserFromContacts: (user_id: number, data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				client.query('BEGIN').then(result => {
-					client.query('SELECT * FROM kontakty WHERE (ko_id=$1)', [data.contactId]).then(result => {
-						if (result.rows.length === 1 && Number(result.rows[0].ko_uz_id_od) === uz_id && Number(result.rows[0].ko_ks_id) !== kontaktyStatusy.usuniety) {
+					client.query('SELECT * FROM contacts WHERE (co_id=$1)', [data.contactId]).then(result => {
+						if (result.rows.length === 1 && Number(result.rows[0].co_user_id_one) === user_id && Number(result.rows[0].co_cs_id) !== contactsStatus.detached) {
 							let firstContact = result.rows[0];
-							client.query('SELECT * FROM kontakty WHERE (ko_uz_id_od=$1) AND (ko_uz_id_do=$2)', [firstContact.ko_uz_id_do, firstContact.ko_uz_id_od]).then(result => {
-								if (result.rows.length === 1 && Number(result.rows[0].ko_ks_id) !== kontaktyStatusy.usuniety) {
+							client.query('SELECT * FROM contacts WHERE (co_user_id_one=$1) AND (co_user_id_two=$2)', [firstContact.co_user_id_two, firstContact.co_user_id_one]).then(result => {
+								if (result.rows.length === 1 && Number(result.rows[0].co_cs_id) !== contactsStatus.detached) {
 									let secondContact = result.rows[0];
-									client.query('UPDATE kontakty SET ko_ks_id=$1 WHERE (ko_id=$2)', [kontaktyStatusy.usuniety, firstContact.ko_id]).then(result => {
-										client.query('UPDATE kontakty SET ko_ks_id=$1 WHERE (ko_id=$2)', [kontaktyStatusy.usuniety, secondContact.ko_id]).then(result => {
+									client.query('UPDATE contacts SET co_cs_id=$1 WHERE (co_id=$2)', [contactsStatus.detached, firstContact.co_id]).then(result => {
+										client.query('UPDATE contacts SET co_cs_id=$1 WHERE (co_id=$2)', [contactsStatus.detached, secondContact.co_id]).then(result => {
 											client.query('COMMIT').then(result => {
 												client.release();
 												observer.next({ status: 0, message: 'The contact has been deleted correctly.', data: {} });
@@ -317,21 +317,21 @@ const dataModelContacts = {
 	/**
 	 * Confirm contact.
 	 * 
-	 * @param uz_id
+	 * @param user_id
 	 * @param data.contactId
 	 */
-	confirmUsersInvToContacts: (uz_id: number, data: any): Observable<any> => {
+	confirmUsersInvToContacts: (user_id: number, data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				client.query('BEGIN').then(result => {
-					client.query('SELECT * FROM kontakty WHERE (ko_id=$1)', [data.contactId]).then(result => {
-						if (result.rows.length === 1 && Number(result.rows[0].ko_uz_id_od) === uz_id && Number(result.rows[0].ko_ks_id) === kontaktyStatusy.oczekujacy) {
+					client.query('SELECT * FROM contacts WHERE (co_id=$1)', [data.contactId]).then(result => {
+						if (result.rows.length === 1 && Number(result.rows[0].co_user_id_one) === user_id && Number(result.rows[0].co_cs_id) === contactsStatus.expectant) {
 							let firstContact = result.rows[0];
-							client.query('SELECT * FROM kontakty WHERE (ko_uz_id_od=$1) AND (ko_uz_id_do=$2)', [firstContact.ko_uz_id_do, firstContact.ko_uz_id_od]).then(result => {
-								if (result.rows.length === 1 && Number(result.rows[0].ko_ks_id) === kontaktyStatusy.oczekujacy) {
+							client.query('SELECT * FROM contacts WHERE (co_user_id_one=$1) AND (co_user_id_two=$2)', [firstContact.co_user_id_two, firstContact.co_user_id_one]).then(result => {
+								if (result.rows.length === 1 && Number(result.rows[0].co_cs_id) === contactsStatus.expectant) {
 									let secondContact = result.rows[0];
-									client.query('UPDATE kontakty SET ko_ks_id=$1 WHERE (ko_id=$2)', [kontaktyStatusy.aktywny, firstContact.ko_id]).then(result => {
-										client.query('UPDATE kontakty SET ko_ks_id=$1 WHERE (ko_id=$2)', [kontaktyStatusy.aktywny, secondContact.ko_id]).then(result => {
+									client.query('UPDATE contacts SET co_cs_id=$1 WHERE (co_id=$2)', [contactsStatus.active, firstContact.co_id]).then(result => {
+										client.query('UPDATE contacts SET co_cs_id=$1 WHERE (co_id=$2)', [contactsStatus.active, secondContact.co_id]).then(result => {
 											client.query('COMMIT').then(result => {
 												client.release();
 												observer.next({ status: 0, message: 'Contact was correctly accepted.', data: {} });
@@ -378,9 +378,9 @@ const dataModelMessages = {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				client.query('BEGIN').then(result => {
-					client.query('INSERT INTO wiadomosci (wi_wt_id, wi_uz_id_od, wi_uz_id_do, wi_tresc) VALUES ($1, $2, $3, $4)', [data.type, data.srcUserId, data.destUserId, data.message]).then(result => {
-						client.query(`SELECT currval(pg_get_serial_sequence('wiadomosci', 'wi_id')) AS id`).then(result => {
-							client.query('SELECT * FROM wiadomosci WHERE (wi_id=$1)', [result.rows[0].id]).then(result => {
+					client.query('INSERT INTO messages (m_mt_id, m_user_id_one, m_user_id_two, m_content) VALUES ($1, $2, $3, $4)', [data.type, data.srcUserId, data.destUserId, data.message]).then(result => {
+						client.query(`SELECT currval(pg_get_serial_sequence('messages', 'm_id')) AS id`).then(result => {
+							client.query('SELECT * FROM messages WHERE (m_id=$1)', [result.rows[0].id]).then(result => {
 								if (result.rows.length === 1) {
 									let wiadomosc: any = result.rows[0];
 									return client.query('COMMIT').then(result => {
