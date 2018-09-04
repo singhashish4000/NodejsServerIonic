@@ -93,10 +93,10 @@ serverRouter.post('/user-register', (req, res) => {
  */
 serverRouter.get('/get-all-messages', (req, res) => {
 	const validateParams = (req): boolean => {
-		if (!req.body.src_userId || req.body.dest_userId === '') {
+		if (!req.get('src_userId') || req.get('dest_userId') === '') {
 			return false;
 		}
-		if (!req.body.dest_userId || req.body.dest_userId === '') {
+		if (!req.get('src_userId') || req.get('dest_userId') === '') {
 			return false;
 		}
 
@@ -105,8 +105,8 @@ serverRouter.get('/get-all-messages', (req, res) => {
 
 	if (validateParams(req)) {
 		authenticationCtrl.getAllMessages({
-			src_userId: req.body.src_userId,
-			dest_userId: req.body.dest_userId
+			src_userId: req.get('src_userId'),
+			dest_userId: req.get('dest_userId')
 		}).subscribe(value => {
 			res.json({ status: 0, message: 'All Messages.' });
 		}, (error: Error) => {
