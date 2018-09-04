@@ -31,8 +31,8 @@ const dataModelUsers = {
 	getAllMessages: (data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
+				let results = [];
 				client.query('SELECT * FROM messages WHERE m_user_id_one = 1  AND m_user_id_two = 5;').then(result => {
-					let results = [];
 					result.rows.forEach(row => {
 							results.push(row);
 					});
