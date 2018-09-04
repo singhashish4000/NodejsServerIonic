@@ -86,6 +86,7 @@ serverRouter.post('/user-register', (req, res) => {
 	}
 });
 /**
+<<<<<<< HEAD
  * Gel all messages between src and destination users.
  * 
  * @param req.body.src_userId
@@ -118,6 +119,8 @@ serverRouter.get('/get-all-messages', (req, res) => {
 	}
 });
 /**
+=======
+>>>>>>> parent of 6b6f679... added all messages rout
  * Downloading the contact list.
  * 
  * @param req.body.type 'active'   - list of accepted contacts,

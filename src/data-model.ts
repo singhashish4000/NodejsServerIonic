@@ -28,36 +28,6 @@ const dataModelUsers = {
 	 * @param data.email
 	 * @param data.password
 	 */
-	getAllMessages: (data: any): Observable<any> => {
-		return Observable.create((observer: Subscriber<any>) => {
-			pool.connect().then(client => {
-				client.query('SELECT * FROM messages WHERE (LOWER(m_user_id_one) = LOWER($1) AND (LOWER(m_user_id_two) = LOWER($2))', [data.src_userId, data.dest_userId]).then(result => {
-					let results = [];
-					result.rows.forEach(row => {
-							results.push(row);
-					});
-					if (results.length >= 1) {
-                        
-						client.release();
-						observer.next({ status: 0, message: 'Messages Found.', data: { result: results }});
-						observer.complete();
-					}
-					else {
-						client.release();
-						observer.error(new Error('No messages'));
-					}
-				});
-			}).catch(error => {
-				observer.error(error);
-			});
-		});
-	},
-	/**
-	 * User login.
-	 * 
-	 * @param data.email
-	 * @param data.password
-	 */
 	userLogin: (data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
@@ -412,10 +382,10 @@ const dataModelMessages = {
 						client.query(`SELECT currval(pg_get_serial_sequence('messages', 'm_id')) AS id`).then(result => {
 							client.query('SELECT * FROM messages WHERE (m_id=$1)', [result.rows[0].id]).then(result => {
 								if (result.rows.length === 1) {
-									let message: any = result.rows[0];
+									let wiadomosc: any = result.rows[0];
 									return client.query('COMMIT').then(result => {
 										client.release();
-										observer.next({ status: 0, message: 'A message has been saved.', data: message });
+										observer.next({ status: 0, message: 'A message has been saved.', data: wiadomosc });
 										observer.complete();
 									});
 								}

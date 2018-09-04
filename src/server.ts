@@ -33,10 +33,10 @@ io.sockets.on('connection', (socket) => {
 				console.log('Event(\'login\'): user authentication error');
 			}
 			else {
-				// remembering the user ID who logged in
+				// zapamiętanie identyfikatora użytkownika który się zalogował
 				socket['userId'] = value.user_id;
 				socketIoWraper.push(socket);
-                
+
 				io.sockets.emit('login', { type: 'login', time: new Date(), login: value.user_login, text: 'he logged in' });
 			}
 		});

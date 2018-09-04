@@ -378,10 +378,10 @@ const dataModelMessages = {
                         client.query(`SELECT currval(pg_get_serial_sequence('messages', 'm_id')) AS id`).then(result => {
                             client.query('SELECT * FROM messages WHERE (m_id=$1)', [result.rows[0].id]).then(result => {
                                 if (result.rows.length === 1) {
-                                    let message = result.rows[0];
+                                    let wiadomosc = result.rows[0];
                                     return client.query('COMMIT').then(result => {
                                         client.release();
-                                        observer.next({ status: 0, message: 'A message has been saved.', data: message });
+                                        observer.next({ status: 0, message: 'A message has been saved.', data: wiadomosc });
                                         observer.complete();
                                     });
                                 }
