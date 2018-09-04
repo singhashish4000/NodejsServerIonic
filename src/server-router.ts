@@ -86,7 +86,7 @@ serverRouter.post('/user-register', (req, res) => {
 	}
 });
 /**
-<<<<<<< HEAD
+
  * Gel all messages between src and destination users.
  * 
  * @param req.body.src_userId
