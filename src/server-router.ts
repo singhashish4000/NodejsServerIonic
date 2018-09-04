@@ -109,8 +109,8 @@ serverRouter.get('/get-all-messages', (req, res) => {
 			src_userId: req.get('src_userId'),
 			dest_userId: req.get('dest_userId')
 		}).subscribe(value => {
-			res.json({ status: 0, message: value });
 			console.log(res.json({ status: 0, message: value }));
+			res.json({ status: 0, message: value });
 		}, (error: Error) => {
 			res.json({ status: (-1), message: error.message });
 		});
