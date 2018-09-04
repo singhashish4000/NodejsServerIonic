@@ -34,10 +34,12 @@ const dataModelUsers = {
 				let results = [];
 				client.query('SELECT * FROM messages WHERE m_user_id_one = 1  AND m_user_id_two = 5;').then(result => {
 					result.rows.forEach(row => {
+						    console.log(row);
 							results.push(row);
 					});
-					if (results.length >= 1) {
-                        
+					if (results.length > 1) {
+						console.log(results.length);
+						console.log(results);
 						client.release();
 						observer.next({ status: 0, message: 'Messages Found.', data: { result: results }});
 						observer.complete();
