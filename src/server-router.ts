@@ -86,6 +86,38 @@ serverRouter.post('/user-register', (req, res) => {
 	}
 });
 /**
+ * Gel all messages between src and destination users.
+ * 
+ * @param req.body.src_userId
+ * @param req.body.dest_userId
+ */
+serverRouter.get('/get-all-messages', (req, res) => {
+	const validateParams = (req): boolean => {
+		if (!req.body.src_userId || req.body.dest_userId === '') {
+			return false;
+		}
+		if (!req.body.dest_userId || req.body.dest_userId === '') {
+			return false;
+		}
+
+		return true;
+	};
+
+	if (validateParams(req)) {
+		authenticationCtrl.getAllMessages({
+			src_userId: req.body.src_userId,
+			dest_userId: req.body.dest_userId
+		}).subscribe(value => {
+			res.json({ status: 0, message: 'All Messages.' });
+		}, (error: Error) => {
+			res.json({ status: (-1), message: error.message });
+		});
+	}
+	else {
+		res.json({ status: (-1), message: 'Invalid parameters passed to function.' });
+	}
+});
+/**
  * Downloading the contact list.
  * 
  * @param req.body.type 'active'   - list of accepted contacts,
