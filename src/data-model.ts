@@ -23,15 +23,15 @@ const contactsStatus = {
  */
 const dataModelUsers = {
 	/**
-	 * User login.
+	 * Get All Messages
 	 * 
-	 * @param data.email
-	 * @param data.password
+	 * @param data.src_userId
+	 * @param data.dest_userId
 	 */
 	getAllMessages: (data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
-				client.query('SELECT * FROM messages WHERE (LOWER(m_user_id_one) = LOWER($1) AND (LOWER(m_user_id_two) = LOWER($2))', [data.src_userId, data.dest_userId]).then(result => {
+				client.query('SELECT * FROM messages WHERE m_user_id_one = 1  AND m_user_id_two = 5;').then(result => {
 					let results = [];
 					result.rows.forEach(row => {
 							results.push(row);
