@@ -68,12 +68,12 @@ const authenticationCtrl = {
 			 dest_userID: data.dest_userID
 		});
 	},
-	saveDbMessages: (data: any): Observable<any> => {
+	saveDbMessages: (type, time, login, text): Observable<any> => {
 		return dataModelUsers.saveDbMessages({
-			type: data.type,
-			time: data.time,
-			login: data.login,
-			text: data.text 
+			type: type,
+			time: time,
+			login: login,
+			text: text 
 		});
 	}
 };

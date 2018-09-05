@@ -127,9 +127,10 @@ serverRouter.get('/get-all-messages', (req, res) => {
  */
 serverRouter.get('/save-db-messages', (req, res) => {
 	const validateParams = (req): boolean => {
-		if (req.body.type === '' || req.body.time === '' || req.body.login === '' || req.body.text === '') {
-			return false;
-		}
+		console.log(req, res);
+		// if (req.body.type === '' || req.body.time === '' || req.body.login === '' || req.body.text === '') {
+		// 	return false;
+		// }
 		// if (!req.get('src_userId') || req.get('dest_userId') === '') {
 		// 	return false;
 		// }
