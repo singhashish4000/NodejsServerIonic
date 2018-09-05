@@ -34,7 +34,7 @@ const dataModelUsers = {
 				let results = [];
 				let first_username = '';
 				let second_username = '';
-				let stmt;
+				let stmt = [];
 				client.query('SELECT * FROM users WHERE  user_id = 6').then(result => {
 					result.rows.forEach(row => {
 						first_username = row.user_login
@@ -50,13 +50,12 @@ const dataModelUsers = {
 				client.query('SELECT * FROM messages WHERE m_user_id_one = 6  AND m_user_id_two = 5;').then(result => {
 							result.rows.forEach(row => {
 								if (row.m_user_id_one == 6 ) {
-									stmt = { type: 'private-message', time: row.m_data, login: first_username, text: row.m_content }
+									stmt.push({ type: 'private-message', time: row.m_data, login: first_username, text: row.m_content })
 								}
 								else if (row.m_user_id_one == 7 ) {
-									stmt = { type: 'private-message', time: row.m_data, login: second_username, text: row.m_content }
+									stmt.push({ type: 'private-message', time: row.m_data, login: second_username, text: row.m_content })
 								}
 						    console.log(stmt);
-						    console.log(row);
 							results.push(stmt);
 					});
 					if (results.length > 1) {
