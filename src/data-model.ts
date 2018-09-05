@@ -34,26 +34,29 @@ const dataModelUsers = {
 				let results = [];
 				let first_username = '';
 				let second_username = '';
-				let stmt = [];
-				client.query('SELECT * FROM users WHERE  user_id = 6').then(result => {
-					result.rows.forEach(row => {
-						first_username = row.user_login
-						console.log(first_username);
-					});		
-				});
-				client.query('SELECT * FROM users WHERE  user_id = 5').then(result => {
-					result.rows.forEach(row => {
-						second_username = row.user_login
-						console.log(second_username);
-					});		
-				});
+				let stmt;
+
+
 				client.query('SELECT * FROM messages WHERE m_user_id_one = 6  AND m_user_id_two = 5;').then(result => {
 							result.rows.forEach(row => {
 								if (row.m_user_id_one == 6 ) {
-									stmt.push({ type: 'private-message', time: row.m_data, login: first_username, text: row.m_content })
+									client.query('SELECT * FROM users WHERE  user_id = 6').then(result => {
+										result.rows.forEach(row => {
+											first_username = row.user_login
+											console.log(first_username);
+											stmt = { type: 'private-message', time: row.m_data, login: first_username, text: row.m_content }
+										});		
+									});
 								}
-								else if (row.m_user_id_one == 7 ) {
-									stmt.push({ type: 'private-message', time: row.m_data, login: second_username, text: row.m_content })
+								else if (row.m_user_id_one == 5 ) {
+									client.query('SELECT * FROM users WHERE  user_id = 5').then(result => {
+										result.rows.forEach(row => {
+											second_username = row.user_login
+											console.log(second_username);
+											stmt = { type: 'private-message', time: row.m_data, login: second_username, text: row.m_content }
+										});		
+									});
+							
 								}
 						    console.log(stmt);
 							results.push(stmt);
