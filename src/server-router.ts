@@ -127,6 +127,7 @@ serverRouter.get('/get-all-messages', (req, res) => {
  * @param req.body.dest_userId
  */
 serverRouter.post('/save-db-messages', (req, res) => {
+	console.log('in api');
 	const validateParams = (req): boolean => {
 		console.log(req, res);
 		// if (req.body.type === '' || req.body.time === '' || req.body.login === '' || req.body.text === '') {
