@@ -92,32 +92,32 @@ serverRouter.post('/user-register', (req, res) => {
  * @param req.body.src_userId
  * @param req.body.dest_userId
  */
-serverRouter.get('/get-all-messages', (req, res) => {
-	const validateParams = (req): boolean => {
-		if (!req.get('src_userId') || req.get('dest_userId') === '') {
-			return false;
-		}
-		if (!req.get('src_userId') || req.get('dest_userId') === '') {
-			return false;
-		}
+// serverRouter.get('/get-all-messages', (req, res) => {
+// 	const validateParams = (req): boolean => {
+// 		if (!req.get('src_userId') || req.get('dest_userId') === '') {
+// 			return false;
+// 		}
+// 		if (!req.get('src_userId') || req.get('dest_userId') === '') {
+// 			return false;
+// 		}
 
-		return true;
-	};
+// 		return true;
+// 	};
 
-	if (validateParams(req)) {
-		authenticationCtrl.getAllMessages({
-			src_userId: req.get('src_userId'),
-			dest_userId: req.get('dest_userId')
-		}).subscribe(value => {
-			res.json({ status: 0, message: value });
-		}, (error: Error) => {
-			res.json({ status: (-1), message: error.message });
-		});
-	}
-	else {
-		res.json({ status: (-1), message: 'Invalid parameters passed to function.' });
-	}
-});
+// 	if (validateParams(req)) {
+// 		authenticationCtrl.getAllMessages({
+// 			src_userId: req.get('src_userId'),
+// 			dest_userId: req.get('dest_userId')
+// 		}).subscribe(value => {
+// 			res.json({ status: 0, message: value });
+// 		}, (error: Error) => {
+// 			res.json({ status: (-1), message: error.message });
+// 		});
+// 	}
+// 	else {
+// 		res.json({ status: (-1), message: 'Invalid parameters passed to function.' });
+// 	}
+// });
 /**
  * Downloading the contact list.
  * 
