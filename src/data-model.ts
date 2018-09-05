@@ -34,8 +34,10 @@ const dataModelUsers = {
 				let results = [];
 				client.query('SELECT * FROM messages WHERE m_user_id_one = 6  AND m_user_id_two = 5;').then(result => {
 					result.rows.forEach(row => {
+						let stmt = { type: 'private-message', time: row.m_data, login: 'S', text: row.m_content } 
+						    console.log(stmt);
 						    console.log(row);
-							results.push(row);
+							results.push(stmt);
 					});
 					if (results.length > 1) {
 						console.log(results.length);
