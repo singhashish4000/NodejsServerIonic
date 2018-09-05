@@ -52,7 +52,7 @@ const dataModelUsers = {
 								if (row.m_user_id_one == 6 ) {
 									stmt = { type: 'private-message', time: row.m_data, login: first_username, text: row.m_content }
 								}
-								if (row.m_user_id_two == 5 ) {
+								else if (row.m_user_id_two == 5 ) {
 									stmt = { type: 'private-message', time: row.m_data, login: second_username, text: row.m_content }
 								}
 						    console.log(stmt);
