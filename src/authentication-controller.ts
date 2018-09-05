@@ -62,12 +62,12 @@ const authenticationCtrl = {
 			password: data.password
 		});
 	},
-	// getAllMessages: (data: any): Observable<any> => {
-	// 	return dataModelUsers.getAllMessages({
-	// 		 src_userId: data.src_userId,
-	// 		 dest_userID: data.dest_userID
-	// 	});
-	// }
+	getAllMessages: (data: any): Observable<any> => {
+		return dataModelUsers.getAllMessages({
+			 src_userId: data.src_userId,
+			 dest_userID: data.dest_userID
+		});
+	}
 };
 
 export { authenticationCtrl }

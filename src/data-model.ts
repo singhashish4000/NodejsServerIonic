@@ -28,32 +28,32 @@ const dataModelUsers = {
 	 * @param data.src_userId
 	 * @param data.dest_userId
 	 */
-	// getAllMessages: (data: any): Observable<any> => {
-	// 	return Observable.create((observer: Subscriber<any>) => {
-	// 		pool.connect().then(client => {
-	// 			let results = [];
-	// 			client.query('SELECT * FROM messages WHERE m_user_id_one = 1  AND m_user_id_two = 5;').then(result => {
-	// 				result.rows.forEach(row => {
-	// 					    console.log(row);
-	// 						results.push(row);
-	// 				});
-	// 				if (results.length > 1) {
-	// 					console.log(results.length);
-	// 					console.log(results);
-	// 					client.release();
-	// 					observer.next({ status: 0, message: 'Messages Found.', data: { result: results }});
-	// 					observer.complete();
-	// 				}
-	// 				else {
-	// 					client.release();
-	// 					observer.error(new Error('No messages'));
-	// 				}
-	// 			});
-	// 		}).catch(error => {
-	// 			observer.error(error);
-	// 		});
-	// 	});
-	// },	
+	getAllMessages: (data: any): Observable<any> => {
+		return Observable.create((observer: Subscriber<any>) => {
+			pool.connect().then(client => {
+				let results = [];
+				client.query('SELECT * FROM messages WHERE m_user_id_one = 1  AND m_user_id_two = 5;').then(result => {
+					result.rows.forEach(row => {
+						    console.log(row);
+							results.push(row);
+					});
+					if (results.length > 1) {
+						console.log(results.length);
+						console.log(results);
+						client.release();
+						observer.next({ status: 0, message: 'Messages Found.', data: { result: results }});
+						observer.complete();
+					}
+					else {
+						client.release();
+						observer.error(new Error('No messages'));
+					}
+				});
+			}).catch(error => {
+				observer.error(error);
+			});
+		});
+	},	
 	/**
 	 * User login.
 	 * 
