@@ -21,7 +21,7 @@ const verifyToken = (token: string, callback): void => {
 	}
 };
 
-const authenticationCtrl = {
+const authenticationCtrl = { 
 	testOk: (data): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			observer.next({ error: (-2), message: 'To jest test' });
