@@ -70,10 +70,7 @@ const authenticationCtrl = {
 	},
 	saveDbMessages: (data: any): Observable<any> => {
 		return dataModelUsers.saveDbMessages({
-			type: data.type,
-			time: data.time,
-			login: data.login,
-			text: data.text 
+			data: data
 		});
 	}
 };

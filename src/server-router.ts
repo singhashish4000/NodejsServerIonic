@@ -5,6 +5,7 @@ import { authenticationCtrl } from './authentication-controller';
 import { contactsCtrl } from './contacts-controller';
 import { socketIoWraper } from './socket-io-wraper';
 import { chatCtrl } from './chat-controller';
+import { Query } from 'pg';
 
 const serverRouter = express.Router();
 
@@ -139,6 +140,7 @@ serverRouter.post('/save-db-messages', (req, res) => {
 	};
 
 	if (validateParams(req)) {
+		console.log("val", req.body)
 		authenticationCtrl.saveDbMessages({
 			data: req.body,
 		}).subscribe(value => {
