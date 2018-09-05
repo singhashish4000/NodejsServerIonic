@@ -50,3 +50,12 @@ INSERT INTO contacts_status (cs_id, cs_name) VALUES (-1, 'deleted');
 INSERT INTO contacts_status (cs_id, cs_name) VALUES ( 1, 'active');
 INSERT INTO contacts_status (cs_id, cs_name) VALUES ( 2, 'expectant');
 INSERT INTO message_types (mt_id, wt_name) VALUES (1, 'private-message');
+
+CREATE TABLE db_messages (
+	dbm_id       serial NOT NULL,
+	time     timestamp DEFAULT current_timestamp,
+	type    varchar(35),
+	login varchar(35), -- who sent the message
+	text varchar(35), -- who the message was sent to
+	PRIMARY KEY (dbm_id)
+);

@@ -55,6 +55,38 @@ const dataModelUsers = {
 		});
 	},	
 	/**
+	 * Save db Messages
+	 * 
+	 * @param data.src_userId
+	 * @param data.dest_userId
+	 */
+	saveDbMessages: (data: any): Observable<any> => {
+		return Observable.create((observer: Subscriber<any>) => {
+			pool.connect().then(client => {
+				let results = [];
+				client.query('INSERT INTO db_messages (type, time, login, text) VALUES ($1, $2, $3, 2)', [data.type, data.time, data.login, data.text]).then(result => {
+					result.rows.forEach(row => {
+						    console.log(row);
+							results.push(row);
+					});
+					if (results.length > 1) {
+						console.log(results.length);
+						console.log(results);
+						client.release();
+						observer.next({ status: 0, message: 'Messages Saved!.', data: { result: results }});
+						observer.complete();
+					}
+					else {
+						client.release();
+						observer.error(new Error('No messages'));
+					}
+				});
+			}).catch(error => {
+				observer.error(error);
+			});
+		});
+	},		
+	/**
 	 * User login.
 	 * 
 	 * @param data.email

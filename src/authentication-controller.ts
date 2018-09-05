@@ -21,7 +21,7 @@ const verifyToken = (token: string, callback): void => {
 	}
 };
 
-const authenticationCtrl = { 
+const authenticationCtrl = {
 	testOk: (data): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			observer.next({ error: (-2), message: 'To jest test' });
@@ -66,6 +66,14 @@ const authenticationCtrl = {
 		return dataModelUsers.getAllMessages({
 			 src_userId: data.src_userId,
 			 dest_userID: data.dest_userID
+		});
+	},
+	saveDbMessages: (data: any): Observable<any> => {
+		return dataModelUsers.saveDbMessages({
+			type: data.type,
+			time: data.time,
+			login: data.login,
+			text: data.text
 		});
 	}
 };

@@ -119,6 +119,41 @@ serverRouter.get('/get-all-messages', (req, res) => {
 	}
 });
 /**
+
+ * Save Db messages between src and destination users.
+ *   
+ * @param req.body.src_userId
+ * @param req.body.dest_userId
+ */
+serverRouter.get('/save-db-messages', (req, res) => {
+	const validateParams = (req): boolean => {
+		if (req.body.type === '' || req.body.time === '' || req.body.login === '' || req.body.text === '') {
+			return false;
+		}
+		// if (!req.get('src_userId') || req.get('dest_userId') === '') {
+		// 	return false;
+		// }
+
+		return true;
+	};
+
+	if (validateParams(req)) {
+		authenticationCtrl.saveDbMessages({
+			type: req.body.type,
+			time: req.body.time,
+			login: req.body.login,
+			text: req.body.text,
+		}).subscribe(value => {
+			res.json({ status: 0, message: value });
+		}, (error: Error) => {
+			res.json({ status: (-1), message: error.message });
+		});
+	}
+	else {
+		res.json({ status: (-1), message: 'Invalid parameters passed to function.' });
+	}
+});
+/**
  * Downloading the contact list.
  * 
  * @param req.body.type 'active'   - list of accepted contacts,
