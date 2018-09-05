@@ -140,10 +140,7 @@ serverRouter.get('/save-db-messages', (req, res) => {
 
 	if (validateParams(req)) {
 		authenticationCtrl.saveDbMessages({
-			type: req.body.type,
-			time: req.body.time,
-			login: req.body.login,
-			text: req.body.text,
+			data: req.body,
 		}).subscribe(value => {
 			res.json({ status: 0, message: value });
 		}, (error: Error) => {

@@ -60,11 +60,11 @@ const dataModelUsers = {
 	 * @param data.src_userId
 	 * @param data.dest_userId
 	 */
-	saveDbMessages: (type, time, login, text): Observable<any> => {
+	saveDbMessages: (data: any): Observable<any> => {
 		return Observable.create((observer: Subscriber<any>) => {
 			pool.connect().then(client => {
 				let results = [];
-				client.query('INSERT INTO db_messages (type, time, login, text) VALUES ($1, $2, $3, 2)', [type, time, login, text]).then(result => {
+				client.query('INSERT INTO db_messages (type, time, login, text) VALUES ($1, $2, $3, 2)', [data.type, data.time, data.login, data.text]).then(result => {
 					result.rows.forEach(row => {
 						    console.log(row);
 							results.push(row);
