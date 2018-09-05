@@ -73,7 +73,7 @@ const authenticationCtrl = {
 			type: data.type,
 			time: data.time,
 			login: data.login,
-			text: data.text
+			text: data.text 
 		});
 	}
 };
