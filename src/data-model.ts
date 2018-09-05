@@ -65,19 +65,17 @@ const dataModelUsers = {
 			pool.connect().then(client => {
 				let results = [];
 				client.query('INSERT INTO db_messages (type, time, login, text) VALUES ($1, $2, $3, 2)', [data.type, data.time, data.login, data.text]).then(result => {
-					result.rows.forEach(row => {
-						    console.log(row);
-							results.push(row);
-					});
-					if (results.length > 1) {
+					if (result) {
 						console.log(results.length);
 						console.log(results);
 						client.release();
-						observer.next({ status: 0, message: 'Messages Saved!.', data: { result: results }});
+						console.log('Success');
+						observer.next({ status: 0, message: 'Messages Saved!.'});
 						observer.complete();
 					}
 					else {
 						client.release();
+						console.log('error');
 						observer.error(new Error('No messages'));
 					}
 				});
