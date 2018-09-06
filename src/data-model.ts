@@ -47,12 +47,12 @@ const dataModelUsers = {
 						console.log(second_username);
 					});		
 				});
-				client.query('SELECT * FROM messages WHERE m_user_id_one = 6  AND m_user_id_two = 5;').then(result => {
+				client.query('SELECT * FROM messages WHERE m_user_id_one = 6 AND m_user_id_two = 5 UNION SELECT * FROM messages WHERE m_user_id_one = 5 AND m_user_id_two = 6;').then(result => {
 							result.rows.forEach(row => {
 								if (row.m_user_id_one == 6 ) {
 									stmt = { type: 'private-message', time: row.m_data, login: first_username, text: row.m_content }
 								}
-								if (row.m_user_id_two == 5 ) {
+								if (row.m_user_id_one == 5 ) {
 									stmt = { type: 'private-message', time: row.m_data, login: second_username, text: row.m_content }
 								}
 						    console.log(stmt);
