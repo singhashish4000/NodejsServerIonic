@@ -148,7 +148,7 @@ serverRouter.post('/save-db-messages', (req, res) => {
 	if (validateParams(req)) {
 
 		authenticationCtrl.saveDbMessages({
-			data: data,
+			
 		}).subscribe(value => {
 			res.json({ status: 0, message: value });
 		}, (error: Error) => {
