@@ -94,6 +94,8 @@ serverRouter.post('/user-register', (req, res) => {
  * @param req.body.dest_userId
  */
 serverRouter.get('/get-all-messages', (req, res) => {
+	console.log("val", req.headers)
+	console.log(req.get('Src_userId'))
 	const validateParams = (req): boolean => {
 		if (!req.get('src_userId') || req.get('dest_userId') === '') {
 			return false;
@@ -141,7 +143,8 @@ serverRouter.post('/save-db-messages', (req, res) => {
 	};
 
 	if (validateParams(req)) {
-		console.log("val", req.body)
+		// console.log("val", req.headers)
+		// console.log(req.get('Src_userId'))
 		authenticationCtrl.saveDbMessages({
 			data: req.body,
 		}).subscribe(value => {
