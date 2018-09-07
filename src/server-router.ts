@@ -106,15 +106,9 @@ serverRouter.get('/get-all-messages', (req, res) => {
 	};
 
 	if (validateParams(req)) {
-		let data = {
-			"src_id" : req.get('Src_userId'),
-			"dest_id" : req.get('Dest_userId')
-		} 
-		console.log("SRC_ID",data.src_id)
-		console.log("DEST_ID",data.dest_id)
-		console.log("DATA IN ROUTE",data);
 		authenticationCtrl.getAllMessages({
-			data: data,
+			src_id : req.get('Src_userId'),
+			dest_id : req.get('Dest_userId')
 		}).subscribe(value => {
 			res.json({ status: 0, message: value });
 		}, (error: Error) => {
