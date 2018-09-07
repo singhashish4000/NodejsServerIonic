@@ -63,6 +63,7 @@ const authenticationCtrl = {
 		});
 	},
 	getAllMessages: (data: any): Observable<any> => {
+		console.log(data);
 		return dataModelUsers.getAllMessages({
 			 data: data,
 		});

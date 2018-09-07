@@ -35,6 +35,7 @@ const dataModelUsers = {
 				let first_username = '';
 				let second_username = '';
 				let stmt;
+				console.log(data);
 				console.log("SRC_ID",data.src_id)
 				console.log("DEST_ID",data.dest_id)
 				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.src_id]).then(result => {
