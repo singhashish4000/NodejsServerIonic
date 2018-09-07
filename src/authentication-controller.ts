@@ -63,10 +63,10 @@ const authenticationCtrl = {
 		});
 	},
 	getAllMessages: (c_data:any): Observable<any> => {
-		console.log("DATA IN AUTH CONNT",c_data.src_id,c_data.dest_id);
+		console.log("DATA IN AUTH CONNT",c_data.data.src_id,c_data.data.dest_id);
 		let data = {
-			src_id : c_data.src_id,
-			dest_id : c_data.dest_id
+			src_id : c_data.data.src_id,
+			dest_id : c_data.data.dest_id
 		}
 		return dataModelUsers.getAllMessages({
 			 data: data
