@@ -112,7 +112,7 @@ serverRouter.get('/get-all-messages', (req, res) => {
 		} 
 		console.log("SRC_ID",data.src_id)
 		console.log("DEST_ID",data.dest_id)
-		console.log(data);
+		console.log("DATA IN ROUTE",data);
 		authenticationCtrl.getAllMessages({
 			data: data,
 		}).subscribe(value => {

@@ -63,7 +63,7 @@ const authenticationCtrl = {
 		});
 	},
 	getAllMessages: (data: any): Observable<any> => {
-		console.log(data);
+		console.log("DATA IN AUTH CONNT",data);
 		return dataModelUsers.getAllMessages({
 			 data: data,
 		});
