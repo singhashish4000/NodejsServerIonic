@@ -40,24 +40,24 @@ const dataModelUsers = {
 				console.log(data["data"])
 				console.log(data.data.src_id)
 				console.log(data["data"].src_id)
-				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.src_id]).then(result => {
+				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.data.src_id]).then(result => {
 					result.rows.forEach(row => {
 						first_username = row.user_login
 						console.log(first_username);
 					});		
 				});
-				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.dest_id]).then(result => {
+				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.data.dest_id]).then(result => {
 					result.rows.forEach(row => {
 						second_username = row.user_login
 						console.log(second_username);
 					});		
 				});
-				client.query('SELECT * FROM messages WHERE m_user_id_one = ($1) AND m_user_id_two = ($2) UNION SELECT * FROM messages WHERE m_user_id_one = ($2) AND m_user_id_two = ($1);',[data.src_id, data.dest_id]).then(result => {
+				client.query('SELECT * FROM messages WHERE m_user_id_one = ($1) AND m_user_id_two = ($2) UNION SELECT * FROM messages WHERE m_user_id_one = ($2) AND m_user_id_two = ($1);',[data.data.src_id, data.data.dest_id]).then(result => {
 							result.rows.forEach(row => {
-								if (row.m_user_id_one == data.src_id ) {
+								if (row.m_user_id_one == data.data.src_id ) {
 									stmt = { type: 'private-message', time: row.m_data, login: first_username, text: row.m_content }
 								}
-								if (row.m_user_id_one == data.dest_id ) {
+								if (row.m_user_id_one == data.data.dest_id ) {
 									stmt = { type: 'private-message', time: row.m_data, login: second_username, text: row.m_content }
 								}
 						    console.log(stmt);
