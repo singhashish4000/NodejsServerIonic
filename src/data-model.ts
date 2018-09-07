@@ -131,7 +131,7 @@ const dataModelUsers = {
 						let tokenData = { user_id: results[0].user_id, user_login: results[0].user_login };
 						let token = jwt.sign(tokenData, serverConfig.jsonwebtoken.secret, { expiresIn: 60 * 24 });
 						client.release();
-						observer.next({ status: 0, message: 'The user has been logged in correctly.', data: { token: token, login: results[0].user_login }});
+						observer.next({ status: 0, message: 'The user has been logged in correctly.', data: { token: token, login: results[0].user_login, id: results[0].user_id }});
 						observer.complete();
 					}
 					else {
