@@ -62,11 +62,14 @@ const authenticationCtrl = {
 			password: data.password
 		});
 	},
-	getAllMessages: (src_id: any, dest_id: any): Observable<any> => {
-		console.log("DATA IN AUTH CONNT",src_id,dest_id);
+	getAllMessages: (c_data:any): Observable<any> => {
+		console.log("DATA IN AUTH CONNT",c_data.src_id,c_data.dest_id);
+		let data = {
+			src_id : c_data.src_id,
+			dest_id : c_data.dest_id
+		}
 		return dataModelUsers.getAllMessages({
-			 src_id : src_id,
-			 dest_id : dest_id
+			 data: data
 		});
 	},
 	saveDbMessages: (data: any): Observable<any> => {
