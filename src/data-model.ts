@@ -55,10 +55,10 @@ const dataModelUsers = {
 				client.query('SELECT * FROM messages WHERE m_user_id_one = ($1) AND m_user_id_two = ($2) UNION SELECT * FROM messages WHERE m_user_id_one = ($2) AND m_user_id_two = ($1);',[data.data.src_id, data.data.dest_id]).then(result => {
 							result.rows.forEach(row => {
 								if (row.m_user_id_one == data.data.src_id ) {
-									stmt = { type: 'private-message', time: row.m_data, login: first_username, id: row.user_id ,text: row.m_content }
+									stmt = { type: 'private-message', time: row.m_data, login: first_username, id: data.data.src_id ,text: row.m_content }
 								}
 								if (row.m_user_id_one == data.data.dest_id ) {
-									stmt = { type: 'private-message', time: row.m_data, login: second_username, id: row.user_id ,text: row.m_content }
+									stmt = { type: 'private-message', time: row.m_data, login: second_username, id: data.data.dest_id ,text: row.m_content }
 								}
 						    console.log(stmt);
 						    console.log(row);
