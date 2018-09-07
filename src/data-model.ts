@@ -36,8 +36,8 @@ const dataModelUsers = {
 				let second_username = '';
 				let stmt;
 				console.log("DATA IN MODEL",data);
-				console.log("SRC_ID",data.src_id)
-				console.log("DEST_ID",data.dest_id)
+				console.log("SRC_ID",data["data"].src_id)
+				console.log("DEST_ID",data["data"].dest_id)
 				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.data.src_id]).then(result => {
 					result.rows.forEach(row => {
 						first_username = row.user_login
