@@ -64,8 +64,7 @@ const authenticationCtrl = {
 	},
 	getAllMessages: (data: any): Observable<any> => {
 		return dataModelUsers.getAllMessages({
-			 src_userId: data.src_userId,
-			 dest_userID: data.dest_userID
+			 data: data,
 		});
 	},
 	saveDbMessages: (data: any): Observable<any> => {

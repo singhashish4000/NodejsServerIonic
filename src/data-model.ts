@@ -35,24 +35,24 @@ const dataModelUsers = {
 				let first_username = '';
 				let second_username = '';
 				let stmt;
-				client.query('SELECT * FROM users WHERE  user_id = 6').then(result => {
+				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.src_id]).then(result => {
 					result.rows.forEach(row => {
 						first_username = row.user_login
 						console.log(first_username);
 					});		
 				});
-				client.query('SELECT * FROM users WHERE  user_id = 5').then(result => {
+				client.query('SELECT * FROM users WHERE  user_id = ($1)',[data.dest_id]).then(result => {
 					result.rows.forEach(row => {
 						second_username = row.user_login
 						console.log(second_username);
 					});		
 				});
-				client.query('SELECT * FROM messages WHERE m_user_id_one = 6 AND m_user_id_two = 5 UNION SELECT * FROM messages WHERE m_user_id_one = 5 AND m_user_id_two = 6;').then(result => {
+				client.query('SELECT * FROM messages WHERE m_user_id_one = ($1) AND m_user_id_two = ($2) UNION SELECT * FROM messages WHERE m_user_id_one = ($2) AND m_user_id_two = ($1);',[data.src_id, data.dest_id]).then(result => {
 							result.rows.forEach(row => {
-								if (row.m_user_id_one == 6 ) {
+								if (row.m_user_id_one == data.src_id ) {
 									stmt = { type: 'private-message', time: row.m_data, login: first_username, text: row.m_content }
 								}
-								if (row.m_user_id_one == 5 ) {
+								if (row.m_user_id_one == data.dest_id ) {
 									stmt = { type: 'private-message', time: row.m_data, login: second_username, text: row.m_content }
 								}
 						    console.log(stmt);
