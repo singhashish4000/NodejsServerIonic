@@ -67,9 +67,11 @@ io.sockets.on('connection', (socket) => {
 				chatCtrl.saveMessage({ type: 'private-message', srcUserId: token.user_id, destUserId: data.destUserId, message: data.text }).subscribe(value => {
 					let srcSocket: SocketIO.Socket = socketIoWraper.findByUserId(token.user_id);
 					let destSocket: SocketIO.Socket = socketIoWraper.findByUserId(data.destUserId);
-					srcSocket.emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id, dest_id: data.destUserId,text: value.data.m_content });
+					console.log(srcSocket);
+					console.log(destSocket);
+					io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id, dest_id: data.destUserId,text: value.data.m_content });
 					if (destSocket) {
-						destSocket.emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id , dest_id: data.destUserId,text: value.data.m_content });
+						io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id , dest_id: data.destUserId,text: value.data.m_content });
 					}
 				}, error => {
 					console.log('Event(\'private-message\'): an error occured ' + error);
