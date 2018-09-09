@@ -5,11 +5,11 @@ const serverConfig = {
 		port: process.env.PORT || 3000
 	},
 	database: {
-		host: 'ec2-50-16-196-138.compute-1.amazonaws.com' || 'localhost',
+		host: 'ec2-54-83-13-119.compute-1.amazonaws.com' || 'localhost',
 		port: 5432,
-		database: 'd8quij0vfs5b2l',
-		user: 'uviomwpzyxedbg',
-		password: '1ef62dfbd85c24c8e84c47b3cb5eae2e81c910b683a5fe7932feabd4c5e502fd',
+		database: 'd35vus2ptboplp',
+		user: 'cockfexyinztco',
+		password: 'f39505f5a01590c125bf742d39b6a901d4c7144eab307d7c95c428dcd7538028',
 		max: 10, // maksymalna liczba połączeń do bazy danych
 		idleTimeoutMillis: 30000
 	},
