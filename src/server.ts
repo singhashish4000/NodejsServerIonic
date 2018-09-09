@@ -58,6 +58,7 @@ io.sockets.on('connection', (socket) => {
 		});
 	});
 	socket.on('private-message', (data) => {
+		console.log(data.roomName);
 		authenticationCtrl.authenticate(data.token, (err, value) => {
 			if (err) {
 				console.log('Event(\'private-message\'): user authentication error');
