@@ -55,8 +55,8 @@ const dataModelUsers = {
 								if (row.m_user_id_one == data.data.dest_id ) {
 									stmt = { type: 'private-message', time: row.m_data, login: second_username, src_id: data.data.src_id , dest_id: data.data.dest_id,text: row.m_content }
 								}
-						    console.log(stmt);
-						    console.log(row);
+						    // console.log(stmt);
+						    // console.log(row);
 							results.push(stmt);
 					});
 					if (results.length > 1) {
