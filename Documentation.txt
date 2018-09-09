@@ -1,0 +1,50 @@
+***BEE-CHAT (version 0.0.1)
+
+***Tech-Stack
+
+    FrontEnd          -> Ionic
+    BackEnd           -> Node Js
+    BackEnd Framework -> Express Js
+    Database          -> Postgres
+    RealTime Event    -> Socket.io(2.0)        
+
+***Tech-Stack-Version's
+
+    @ionic/app-scripts : 1.1.4
+    Cordova Platforms  : android 7.0.0 ios 4.5.5
+    Ionic Framework    : ionic-angular 2.2.0
+
+    Android SDK Tools : 26.1.1
+    Node              : v8.11.3
+    npm               : 5.6.0 
+    OS                : Linux 4.15
+
+***Workflow
+
+    ->We assume, we have one client at the moment.
+    ->Client instructs employees to download app from playstore.
+    ->Employees register themselves and login.
+    ->Once logined, they can send friend request/invetation to other colleges.
+    ->The recieving end of the friend request can accept or delete the friend request.
+    ->Once recieving end of the friend request accepts the request, they both can have conversation.
+    ->At present, thers's only one group, where all employees can message.
+
+***Features
+
+    ->One-to-One messages are sent at real time,and the conversation is stored in database.
+    ->Friend Request Notification is sent and recieved at realtime.
+    ->Group Messages are sent in realtime
+    ->Accept/Deny Friend Request
+    ->View Sent/Recieved Friend Request
+
+***Bugs
+
+    ->Scenario:
+        Three users: User-One, User-Two, User-Three 
+        User-One and User-Two are having a conversation.
+        If User-Three sends message to User-Two User-One can also see that message.
+
+    ->Need to Encapsulate One-to-One Chat, so no third person recieves their message.
+    ->Same with Group Chat
+
+

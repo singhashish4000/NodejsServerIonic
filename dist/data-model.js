@@ -86,7 +86,7 @@ const dataModelUsers = {
                                         client.query('INSERT INTO users(user_password, user_login, user_email) VALUES ($1, $2, $3)', [hash, data.login, data.email]).then(result => {
                                             client.query('COMMIT').then(result => {
                                                 client.release();
-                                                observer.next({ status: 0, message: 'Poprawnie zarejestrowano nowego użytkownika.' });
+                                                observer.next({ status: 0, message: 'A new user has been registered correctly.' });
                                                 observer.complete();
                                             });
                                         });
@@ -165,19 +165,19 @@ const dataModelContacts = {
                 client.query('BEGIN').then(result => {
                     client.query('SELECT * FROM contacts WHERE (co_user_id_one=$1) AND (co_user_id_two=$2)', [user_id, data.userId]).then(result => {
                         if (result.rows.length === 0) {
-                            // związku jeszcze nie było - rejestracja związków w obie strony (uzytkownik1 -> użytkownik2, użytkownik2 -> użytkownik1)
+                            // the relationship has not been there - registration of compounds in both directions (user1 -> user2, user2 -> user1)
                             client.query('INSERT INTO contacts (co_user_id_start, co_user_id_one, co_user_id_two, co_cs_id) VALUES ($1, $2, $3, 2)', [user_id, user_id, data.userId]).then(result => {
                                 client.query('INSERT INTO contacts (co_user_id_start, co_user_id_one, co_user_id_two, co_cs_id) VALUES ($1, $2, $3, 2)', [user_id, data.userId, user_id]).then(result => {
                                     client.query('COMMIT').then(result => {
                                         client.release();
-                                        observer.next({ status: 0, message: 'Poprawnie zaproszono nowego użytkownika do kontaktów.', data: { sourceUserId: user_id, targetUserId: data.userId } });
+                                        observer.next({ status: 0, message: 'A new contact user has been successfully invited.', data: { sourceUserId: user_id, targetUserId: data.userId } });
                                         observer.complete();
                                     });
                                 });
                             });
                         }
                         else {
-                            // związek już był - aktualizacja związków w obie strony (uzytkownik1 -> użytkownik2, użytkownik2 -> użytkownik1)
+                            // the relationship was already - updated connections in both directions (user1 -> user2, user2 -> user1)
                             if (Number(result.rows[0].co_cs_id) === contactsStatus.detached) {
                                 client.query('UPDATE contacts SET co_user_id_start=$1, co_cs_id=$2 WHERE (co_user_id_one=$3) AND (co_user_id_two=$4)', [user_id, contactsStatus.expectant, user_id, data.userId]).then(result => {
                                     client.query('UPDATE contacts SET co_user_id_start=$1, co_cs_id=$2 WHERE (co_user_id_one=$3) AND (co_user_id_two=$4)', [user_id, contactsStatus.expectant, data.userId, user_id]).then(result => {
@@ -219,7 +219,7 @@ const dataModelContacts = {
             pool.connect().then(client => {
                 client.query('SELECT COUNT(*) AS ile FROM contacts WHERE (co_user_id_start<>$1) AND (co_user_id_one=$1) AND (co_cs_id=$2)', [user_id, contactsStatus.expectant]).then(result => {
                     client.release();
-                    observer.next({ status: 0, message: 'Poprawnie pobrano liczbę oczekujących zaproszeń do kontaktów.', data: result.rows[0].ile });
+                    observer.next({ status: 0, message: 'The number of pending contact invitations was retrieved correctly.', data: result.rows[0].ile });
                     observer.complete();
                 });
             }).catch(error => {

@@ -68,8 +68,8 @@ io.sockets.on('connection', (socket) => {
 				chatCtrl.saveMessage({ type: 'private-message', srcUserId: token.user_id, destUserId: data.destUserId, message: data.text }).subscribe(value => {
 					let srcSocket: SocketIO.Socket = socketIoWraper.findByUserId(token.user_id);
 					let destSocket: SocketIO.Socket = socketIoWraper.findByUserId(data.destUserId);
-					console.log(srcSocket);
-					console.log(destSocket);
+					// console.log(srcSocket);
+					// console.log(destSocket);
 					io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id, dest_id: data.destUserId,text: value.data.m_content });
 					// if (destSocket) {
 					// 	io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id , dest_id: data.destUserId,text: value.data.m_content });

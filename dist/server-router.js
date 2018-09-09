@@ -154,7 +154,7 @@ serverRouter.post('/contacts-invite-users', authentication_controller_1.authenti
     if (validateParams(req)) {
         contacts_controller_1.contactsCtrl.inviteUser(req).subscribe(value => {
             if (value.status === 0) {
-                // wysłanie powiadomienia do zaproszonego użytkownika
+                // sending a notification to the invited user
                 socket_io_wraper_1.socketIoWraper.getAll().forEach(socket => {
                     if (socket['userId'] && socket['userId'] === Number(req.body.userId)) {
                         socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
@@ -222,13 +222,13 @@ serverRouter.post('/contacts-confirm-users', authentication_controller_1.authent
     if (validateParams(req)) {
         contacts_controller_1.contactsCtrl.confirmUser(req).subscribe(value => {
             if (value.status === 0) {
-                // wysłanie powiadomienia do użytkownika którego zaposzenie zaakceptowaliśmy
+                // sending a notification to the user whose request we have accepted
                 socket_io_wraper_1.socketIoWraper.getAll().forEach(socket => {
                     if (socket['userId'] && socket['userId'] === Number(req.body.userId)) {
                         socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
                     }
                 });
-                // wysłanie powiadomienia do użytkownika który zaakceptował zaproszenie
+                // sending a notification to the user who accepted the invitation
                 socket_io_wraper_1.socketIoWraper.getAll().forEach(socket => {
                     if (socket['userId'] && socket['userId'] === Number(req['decoded'].user_id)) {
                         socket.emit('contact-invite', { type: 'contact-invite', time: new Date() });
