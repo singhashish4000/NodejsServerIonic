@@ -60,8 +60,8 @@ const dataModelUsers = {
 							results.push(stmt);
 					});
 					if (results.length > 1) {
-						console.log(results.length);
-						console.log(results);
+						// console.log(results.length);
+						// console.log(results);
 						client.release();
 						observer.next({ status: 0, message: 'Messages Found.', data: { result: results }});
 						observer.complete();

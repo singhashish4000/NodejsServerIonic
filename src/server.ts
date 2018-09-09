@@ -23,9 +23,10 @@ io.sockets.on('connection', (socket) => {
 	console.log('The user connected to the server');
 	socketIoWraper.push(socket);
 
-	socket.on('join', (data) => {
+	socket.on('join', (data,  callback) => {
 		console.log('Joined '+ data.room)
 		socket.join(data.room);
+		callback();
 	});
 
 	socket.on('disconnect', (socket) => {
