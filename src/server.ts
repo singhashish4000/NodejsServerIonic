@@ -71,9 +71,9 @@ io.sockets.on('connection', (socket) => {
 					console.log(srcSocket);
 					console.log(destSocket);
 					io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id, dest_id: data.destUserId,text: value.data.m_content });
-					if (destSocket) {
-						io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id , dest_id: data.destUserId,text: value.data.m_content });
-					}
+					// if (destSocket) {
+					// 	io.to(data.roomName).emit('private-message', { type: 'private-message', time: value.data.m_data, login: token.user_login, src_id: token.user_id , dest_id: data.destUserId,text: value.data.m_content });
+					// }
 				}, error => {
 					console.log('Event(\'private-message\'): an error occured ' + error);
 				});
